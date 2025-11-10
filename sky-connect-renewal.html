@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sky-Connect - 医療機関向けシステム開発。電子カルテANNYYSを提供">
+    <title>Sky-Connect | 医療機関向けシステム開発</title>
+    <style>
+        /* ===== リセット & ベース ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #4682B4;
+            --secondary-color: #5A9FD4;
+            --accent-color: #87CEEB;
+            --sky-blue-light: #B0E0E6;
+            --sky-blue-dark: #4A90E2;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --bg-light: #f9fafb;
+            --bg-white: #ffffff;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+            line-height: 1.7;
+            color: var(--text-dark);
+            background-color: var(--bg-white);
+            overflow-x: hidden;
+        }
+
+        /* ===== ヘッダー ===== */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow-sm);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        header.scrolled {
+            box-shadow: var(--shadow-md);
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text-dark);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 5px;
+        }
+
+        .menu-toggle span {
+            width: 25px;
+            height: 3px;
+            background: var(--text-dark);
+            transition: all 0.3s ease;
+        }
+
+        /* ===== ヒーローセクション ===== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary-color);
+            background-image: url('aozora_3..jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: relative;
+            overflow: hidden;
+            padding-top: 80px;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(70, 130, 180, 0.4);
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            text-align: center;
+            color: white;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            margin-bottom: 1rem;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero p {
+            font-size: clamp(1.1rem, 2vw, 1.5rem);
+            margin-bottom: 2rem;
+            opacity: 0.95;
+            animation: fadeInUp 1s ease 0.2s both;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: white;
+            color: var(--primary-color);
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-lg);
+            animation: fadeInUp 1s ease 0.4s both;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        /* ===== セクション共通 ===== */
+        section {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-light);
+            font-size: 1.1rem;
+            margin-bottom: 3rem;
+        }
+
+        /* ===== CONCEPTセクション ===== */
+        .concept {
+            background: var(--bg-light);
+        }
+
+        .concept-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .concept-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+        }
+
+        .concept-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .concept-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .concept-card p {
+            color: var(--text-light);
+            line-height: 1.8;
+        }
+
+        /* ===== ANNYYSセクション ===== */
+        .annyys {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .annyys .section-title,
+        .annyys .section-subtitle {
+            color: white;
+        }
+
+        .annyys-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-box {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .feature-box h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .feature-box li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .feature-box li::before {
+            content: '・';
+            position: absolute;
+            left: 0;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* ===== NEWSセクション ===== */
+        .news {
+            background: var(--bg-light);
+        }
+
+        .news-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .news-item {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            gap: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .news-item:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateX(5px);
+        }
+
+        .news-date {
+            color: var(--primary-color);
+            font-weight: 600;
+            min-width: 120px;
+        }
+
+        .news-content {
+            flex: 1;
+        }
+
+        /* ===== CONTACTセクション ===== */
+        .contact {
+            background: var(--text-dark);
+            color: white;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .contact-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .contact-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+        }
+
+        .contact-card a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .contact-card a:hover {
+            color: var(--accent-color);
+        }
+
+        /* ===== フッター ===== */
+        footer {
+            background: #111827;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        /* ===== アニメーション ===== */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ===== レスポンシブ ===== */
+        @media (max-width: 768px) {
+            .nav-links {
+                position: fixed;
+                top: 70px;
+                left: -100%;
+                width: 100%;
+                background: white;
+                flex-direction: column;
+                padding: 2rem;
+                box-shadow: var(--shadow-lg);
+                transition: left 0.3s ease;
+            }
+
+            .nav-links.active {
+                left: 0;
+            }
+
+            .menu-toggle {
+                display: flex;
+            }
+
+            .menu-toggle.active span:nth-child(1) {
+                transform: rotate(45deg) translate(8px, 8px);
+            }
+
+            .menu-toggle.active span:nth-child(2) {
+                opacity: 0;
+            }
+
+            .menu-toggle.active span:nth-child(3) {
+                transform: rotate(-45deg) translate(7px, -7px);
+            }
+
+            section {
+                padding: 3rem 1rem;
+            }
+
+            .news-item {
+                flex-direction: column;
+            }
+
+            .news-date {
+                min-width: auto;
+            }
+        }
+
+        /* ===== スクロールバー ===== */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-light);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- ヘッダー -->
+    <header id="header">
+        <nav>
+            <div class="logo">Sky-Connect</div>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#top">TOP</a></li>
+                <li><a href="#concept">CONCEPT</a></li>
+                <li><a href="#annyys">ANNYYS</a></li>
+                <li><a href="#news">NEWS</a></li>
+                <li><a href="#contact">CONTACT</a></li>
+            </ul>
+            <div class="menu-toggle" id="menuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+    </header>
+
+    <!-- ヒーローセクション -->
+    <section class="hero" id="top">
+        <div class="hero-content">
+            <h1>医療機関向けシステム開発</h1>
+            <p>電子カルテ「ANNYYS」で医療現場を革新する</p>
+            <a href="#contact" class="cta-button">お問い合わせ</a>
+        </div>
+    </section>
+
+    <!-- CONCEPTセクション -->
+    <section class="concept" id="concept">
+        <h2 class="section-title">CONCEPT</h2>
+        <p class="section-subtitle">医療現場の課題を解決する、信頼できるパートナー</p>
+        <div class="concept-grid">
+            <div class="concept-card fade-in">
+                <h3>医療機関向けシステム開発</h3>
+                <p>豊富な経験と実績を持つ開発チームが、医療機関のニーズに応じた高品質なシステムを提供します。</p>
+            </div>
+            <div class="concept-card fade-in">
+                <h3>電子カルテ「ANNYYS」</h3>
+                <p>使いやすく、効率的な電子カルテシステムで、医療現場の業務をサポートします。</p>
+            </div>
+            <div class="concept-card fade-in">
+                <h3>システム連携</h3>
+                <p>画像診断システム「RS_Base」との連携により、より包括的な医療情報管理を実現します。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ANNYYSセクション -->
+    <section class="annyys" id="annyys">
+        <h2 class="section-title">ANNYYS</h2>
+        <p class="section-subtitle">電子カルテシステムの新たなスタンダード</p>
+        <div class="annyys-content">
+            <div class="feature-box fade-in">
+                <h3>主な機能</h3>
+                <ul>
+                    <li>患者情報の一元管理</li>
+                    <li>診療記録の電子化</li>
+                    <li>処方箋の発行・管理</li>
+                    <li>検査結果の確認</li>
+                    <li>レセプト連携</li>
+                </ul>
+            </div>
+            <div class="feature-box fade-in">
+                <h3>RS_Base連携</h3>
+                <ul>
+                    <li>画像診断システムとのシームレスな連携</li>
+                    <li>画像データの一元管理</li>
+                    <li>診断効率の向上</li>
+                    <li>医療情報の統合管理</li>
+                </ul>
+            </div>
+            <div class="feature-box fade-in">
+                <h3>導入実績</h3>
+                <ul>
+                    <li>日本全国の医療機関で採用実績</li>
+                    <li>ORCAシステムとの連携実績</li>
+                    <li>継続的なサポート体制</li>
+                    <li>カスタマイズ対応可能</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEWSセクション -->
+    <section class="news" id="news">
+        <h2 class="section-title">NEWS & FAQ</h2>
+        <p class="section-subtitle">最新情報とよくある質問</p>
+        <div class="news-list">
+            <div class="news-item fade-in">
+                <div class="news-date">2012年6月1日</div>
+                <div class="news-content">
+                    <strong>サイトをリニューアルしました</strong>
+                    <p>より使いやすく、情報を探しやすいサイトに生まれ変わりました。</p>
+                </div>
+            </div>
+            <div class="news-item fade-in">
+                <div class="news-date">2025年11月</div>
+                <div class="news-content">
+                    <strong>電子カルテ「ANNYYS」の新機能</strong>
+                    <p>画像診断システム「RS_Base」との連携機能を強化しました。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACTセクション -->
+    <section class="contact" id="contact">
+        <h2 class="section-title">CONTACT US</h2>
+        <p class="section-subtitle">お気軽にお問い合わせください</p>
+        <div class="contact-grid">
+            <div class="contact-card fade-in">
+                <h3>Hideto Yamaguchi</h3>
+                <p>
+                    <a href="mailto:skyconnect.corp@gmail.com">skyconnect.corp@gmail.com</a>
+                </p>
+            </div>
+            <div class="contact-card fade-in">
+                <h3>Keiko Sanematsu</h3>
+                <p>
+                    <a href="mailto:skinen1270@gmail.com">skinen1270@gmail.com</a>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- フッター -->
+    <footer>
+        <p>&copy; 2025 Sky-Connect. All Rights Reserved.</p>
+        <p style="margin-top: 0.5rem; font-size: 0.9rem; opacity: 0.8;">
+            <a href="#privacy" style="color: white; text-decoration: none;">プライバシーポリシー</a>
+        </p>
+    </footer>
+
+    <script>
+        // ===== ヘッダーのスクロール効果 =====
+        const header = document.getElementById('header');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // ===== モバイルメニュー =====
+        const menuToggle = document.getElementById('menuToggle');
+        const navLinks = document.getElementById('navLinks');
+
+        menuToggle.addEventListener('click', () => {
+            menuToggle.classList.toggle('active');
+            navLinks.classList.toggle('active');
+        });
+
+        // メニューリンククリック時にメニューを閉じる
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                menuToggle.classList.remove('active');
+                navLinks.classList.remove('active');
+            });
+        });
+
+        // ===== スムーズスクロール =====
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    const headerHeight = header.offsetHeight;
+                    const targetPosition = targetElement.offsetTop - headerHeight;
+                    
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // ===== スクロールアニメーション =====
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // ===== アクティブなナビゲーションリンクのハイライト =====
+        const sections = document.querySelectorAll('section[id]');
+        const navLinksArray = document.querySelectorAll('.nav-links a');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (window.scrollY >= sectionTop - 100) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinksArray.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // ===== パララックス効果（オプション） =====
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const hero = document.querySelector('.hero');
+            if (hero) {
+                hero.style.transform = `translateY(${scrolled * 0.5}px)`;
+            }
+        });
+    </script>
+</body>
+</html>
